@@ -1,4 +1,3 @@
-
 # program template for Spaceship
 try:
     import simplegui
@@ -15,7 +14,7 @@ ANGLE_VEL = 0.07
 # damping constant
 DAMPING = 0.02
 # acceleration constant
-ACC = 0.25
+ACC = 0.15
 # bullet's velocity constant
 B = 8
 # missile lifespan constatn
@@ -230,10 +229,19 @@ def draw(canvas):
     canvas.draw_image(debris_image, center, size, (wtime + WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT))
     
     canvas.draw_text(str(score), [WIDTH * 7 / 8, HEIGHT / 8], 20, "White")
-    canvas.draw_text("score", [WIDTH * 7 / 8 - 15, HEIGHT / 8 - 30], 20, "White")
+    canvas.draw_text("Scores", [WIDTH * 7 / 8 - 15, HEIGHT / 8 - 30], 20, "White")
     canvas.draw_text(str(lives), [WIDTH / 8, HEIGHT / 8], 20, "White")
-    canvas.draw_text("lives", [WIDTH / 8 - 15, HEIGHT / 8 - 30], 20, "White")
-
+    canvas.draw_text("Lives", [WIDTH / 8 - 15, HEIGHT / 8 - 30], 20, "White")
+    
+    if lives == 0:
+        canvas.draw_polygon([[150, 180], [150, 260], [650, 260], [650, 180]], 6,"Lime", "Black")
+        canvas.draw_polygon([[200, 340], [200, 420], [600, 420], [600, 340]], 6,"Lime", "Black")
+        canvas.draw_text("Scores: " + str(score), [300, 235], 45, "Lime")
+        canvas.draw_text("Click to Start", [250, 395], 50, "Lime")
+#        game.begin = False
+        game.timer.stop()
+        game.rocks_set = set([])
+    
     # draw ship and sprites
     game.ship.draw(canvas)
     
@@ -258,11 +266,8 @@ def draw(canvas):
     
     if not game.begin:
         canvas.draw_image(splash_image, splash_info.get_center(), splash_info.get_size(), [WIDTH / 2, HEIGHT / 2], splash_info.get_size())
-    
-    if lives == 0:
-        game.begin = False
-        game.timer.stop()
-        game.rocks_set = set([])
+  
+
 
 def draw_update_group(obj_set, canvas):
     remove_set = set([])
@@ -347,12 +352,9 @@ class Game():
         # release 'down' 
         elif key == simplegui.KEY_MAP['space']:
             pass
-        else:
+        elif key == simplegui.KEY_MAP['left'] or key == simplegui.KEY_MAP['right']:
             self.key_down_count -= 1
             if self.key_down_count == 0:
-                if key == simplegui.KEY_MAP['left']:          
-                    self.ship.angle_vel = 0          
-                if key == simplegui.KEY_MAP['right']:
                     self.ship.angle_vel = 0
        
         
@@ -363,7 +365,7 @@ class Game():
             self.ship.thrust = True
         elif key == simplegui.KEY_MAP['space']:
             self.ship.shoot()
-        else:
+        elif key == simplegui.KEY_MAP['left'] or key == simplegui.KEY_MAP['right']:
             self.key_down_count += 1
 
             # press 'left', spin clockwisely
